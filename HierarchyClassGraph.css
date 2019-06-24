@@ -1,6 +1,7 @@
 text {
     font-size: 11px;
     pointer-events: none;
+    /*width:20em;*/
 }
 
 text.root{
@@ -8,7 +9,18 @@ text.root{
 }
 
 text.parent {
+    fill: brown;
+    font-size: 12px;
+
+}
+text.child {
     fill: steelblue;
+}
+
+text.hidden
+{
+    /*visibility: hidden;*/
+    /*display:none;*/
 }
 
 circle {
@@ -17,10 +29,13 @@ circle {
     pointer-events: all;
 }
 
+/*circle.parent:hover*/
+/*{*/
+    /*cursor: pointer;*/
+/*}*/
+
 circle.root
 {
-    /*fill-opacity: 0;*/
-    /*stroke-opacity: 0;*/
     display:none;
 }
 
@@ -30,10 +45,32 @@ circle.parent {
     stroke: steelblue;
 }
 
-circle.parent:hover {
-    stroke-width: .5px;
+circle.parent:hover, circle.child:hover {
+    stroke-width: 2px;
+    cursor:pointer;
 }
 
 circle.child {
-    pointer-events: none;
+    fill: mediumpurple;
+    fill-opacity: .1;
+    stroke: mediumpurple;
+    /*visibility: hidden;*/
 }
+
+circle.hidden 
+{
+    /*visibility: hidden;*/
+    /*display:none;*/
+}
+
+
+
+
+/*circle.child:hover*/
+/*{*/
+    /*stroke-width: .5px;*/
+/*}*/
+
+/*circle.child {*/
+    /*pointer-events: none;*/
+/*}*/
