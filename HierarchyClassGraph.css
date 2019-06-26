@@ -1,76 +1,63 @@
+body{
+    text-align: center;
+}
+
 text {
     font-size: 11px;
     pointer-events: none;
     /*width:20em;*/
 }
 
-text.root{
+text.rootElement{
     display: none;
 }
 
-text.parent {
+text.package,text.class {
     fill: brown;
-    font-size: 12px;
-
+    font-size: 13px;
 }
-text.child {
+
+text.class{
     fill: steelblue;
+    font-size: 12px;
+}
+
+text.method {
+    fill: #08182b;
+    font-size:10px;
 }
 
 text.hidden
 {
-    /*visibility: hidden;*/
-    /*display:none;*/
+    display:none;
+}
+
+text.focus
+{
+    font-size: 15px;
+    fill: red;
 }
 
 circle {
-    fill: #ccc;
-    stroke: #999;
+    /*fill: #ccc;*/
+    stroke: #333333;
     pointer-events: all;
 }
 
-/*circle.parent:hover*/
-/*{*/
-    /*cursor: pointer;*/
-/*}*/
-
-circle.root
+circle.rootElement
 {
     display:none;
 }
 
-circle.parent {
-    fill: steelblue;
-    fill-opacity: .1;
-    stroke: steelblue;
-}
-
-circle.parent:hover, circle.child:hover {
-    stroke-width: 2px;
-    cursor:pointer;
-}
-
-circle.child {
-    fill: mediumpurple;
-    fill-opacity: .1;
-    stroke: mediumpurple;
-    /*visibility: hidden;*/
+circle:hover
+{
+    cursor: pointer;
+    stroke-width:2px;
+    stroke:red;
 }
 
 circle.hidden 
 {
-    /*visibility: hidden;*/
-    /*display:none;*/
+    display:none;
 }
 
-
-
-
-/*circle.child:hover*/
-/*{*/
-    /*stroke-width: .5px;*/
-/*}*/
-
-/*circle.child {*/
-    /*pointer-events: none;*/
-/*}*/
