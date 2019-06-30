@@ -61,3 +61,14 @@ circle.hidden
     display:none;
 }
 
+svg line
+{
+    cursor: pointer;
+}
+
+svg line:hover
+{
+    stroke: red;
+    stroke-width: 4px;
+
+}

@@ -61,11 +61,12 @@ function InitAll()
 
                 renderLabels(nodes);
 
-                // dealLinkData(nodes);
+                dealLinkData(nodes);
+                // console.log(isVisible("works.weave.socks.cart.cart.CartContentsResource:lambda$add$1", nodes));
 
-                // renderLinks(nodes);
+                renderLinks(nodes);
 
-                bindEventsOnCircles();
+                bindEvents(nodes);
             }
 
             function renderCircles(nodes) {
@@ -162,6 +163,7 @@ function InitAll()
                 circles.exit().transition()
                     .attr("r", 0)
                     .remove();
+
             }
 
             function renderLabels(nodes) {
@@ -242,26 +244,46 @@ function InitAll()
 
             function dealLinkData(nodes) {
                 // 为svg增加 arrow marker
-                console.log(nodes);
+                // console.log(nodes);
                 var links = [];
                 var linkInfo = nodes[0].links;
                 linkInfo.forEach(function(currentLink){
                     links.push({"x1":0,"y1":0,"x2":0,"y2":0});
                     let sourceExist = false;
                     let targetExist = false;
+                    let source = "";
+                    let target = "";
                     for(let i=1;i<nodes.length;i++)
                     {
                         if(currentLink.source == nodes[i].name)
                         {
-                            links[links.length-1].x1=nodes[i].x;
-                            links[links.length-1].y1=nodes[i].y;
+                            if(nodes[i].parent.isChildrenVisible) {
+                                links[links.length - 1].x1 = nodes[i].x;
+                                links[links.length - 1].y1 = nodes[i].y;
+                                source = nodes[i].name;
+                            }
+                            else
+                            {
+                                links[links.length - 1].x1 = nodes[i].parent.x;
+                                links[links.length - 1].y1 = nodes[i].parent.y;
+                                source = nodes[i].parent.name;
+                            }
                             sourceExist = true;
                             continue;
                         }
                         if(currentLink.target == nodes[i].name)
                         {
-                            links[links.length-1].x2=nodes[i].x;
-                            links[links.length-1].y2=nodes[i].y;
+                            if(nodes[i].parent.isChildrenVisible) {
+                                links[links.length - 1].x2 = nodes[i].x;
+                                links[links.length - 1].y2 = nodes[i].y;
+                                target = nodes[i].name;
+                            }
+                            else
+                            {
+                                links[links.length - 1].x2 = nodes[i].parent.x;
+                                links[links.length - 1].y2 = nodes[i].parent.y;
+                                target = nodes[i].parent.name;
+                            }
                             targetExist = true;
                             continue;
                         }
@@ -270,8 +292,11 @@ function InitAll()
                     {
                         links.pop();
                     }
+                    if(source == target)
+                    {
+                        links.pop();
+                    }
                 });
-
                 //初始化箭头描述信息
                 var defs = d3.select('svg').append('defs');
                 //箭头
@@ -287,15 +312,26 @@ function InitAll()
                 var arrowPath = "M2,2 L10,6 L2,10 L6,6 L2,2";
                 // var arrowPath = "M20,70 T80,100 T160,80 T200,90";
                 arrowMarker.append("path").attr("d", arrowPath).attr('fill','#937').attr("opacity",0.9);
-
-                console.log(links);
                 return links;
             }
 
+            // function isVisible(methodName, nodes){ //判断method对应的circle是否隐藏
+            //     for(let i=0;i<nodes.length;i++)
+            //     {
+            //         if(methodName == nodes[i].name)
+            //         {
+            //             return nodes[i].parent.isChildrenVisible;
+            //         }
+            //     }
+            //     return false;
+            // }
+
             // 为circles绑定事件
-            function bindEventsOnCircles() {
+            function bindEvents(nodes) {
                 var circles = _bodyG.selectAll("circle");
                 var labels = _bodyG.selectAll("text")[0];
+                var lines = _bodyG.selectAll("line");
+                console.log(lines);
 
                 //双击circle的时候，class circle会展示method circle，method circle会展示方法流程图
                 circles.on("dblclick", function(d,i){
@@ -324,7 +360,11 @@ function InitAll()
                                 }
                             }
                         }
+                        nodes[i].isChildrenVisible = !nodes[i].isChildrenVisible;
+                        renderLinks(nodes);
                     }
+                    // console.log(nodes);
+                    // console.log(isVisible("works.weave.socks.cart.cart.CartContentsResource:lambda$add$1", nodes));
                     return false;
                 });
 
@@ -336,6 +376,7 @@ function InitAll()
                         labels[i].classList.add("focus");
                     }
 
+                    return false;
                 });
 
                 // 鼠标移出circle的时候，label复原
@@ -344,7 +385,15 @@ function InitAll()
                     {
                         labels[i].classList.remove("focus");
                     }
+
+                    return false;
                 });
+
+                //鼠标悬浮在line上的时候，line的颜色改变，高亮
+                // lines.on("mouseenter", function(d, i){
+                //     console.log(this);
+                // })
+
             }
 
             _chart.width = function (w) {
@@ -429,6 +478,10 @@ function InitAll()
                             "children":[],
                             "type":(j<packageInfo[i].length-1?"package":"class")
                         });
+                        if(curCA[curCA.length-1].type == "class")
+                        {
+                            curCA[curCA.length-1].isChildrenVisible = false; //设置class的method最初不可见
+                        }
                         curCA = curCA[curCA.length-1].children;
                     }
                 }
@@ -454,6 +507,7 @@ function InitAll()
             // 处理links数据
             for(let i=0;i<linksInfo.length;i++)
             {
+                // 此处links中的source和target的name都是method名，method名包括了对应的包名和类名
                 nodes.links.push({"source":linksInfo[i].source.name,"target":linksInfo[i].target.name});
             }
 
