@@ -11,9 +11,11 @@ function InitAll()
         var packageColor = "#feee7d";
         var classColor = "#99f19e";
         var methodColor = "#9055a2";
+        var isShowLinks = false; //初始不展示links（调用关系）
 
 
-        function pack() {
+        function pack()
+        {
             var _chart = {};
 
             var _width = 1024, _height = 1024,  //1280
@@ -22,7 +24,8 @@ function InitAll()
                 _x = d3.scale.linear().range([0, _r]),
                 _y = d3.scale.linear().range([0, _r]),
                 _nodes,   // original nodes info
-                _bodyG;
+                _bodyG,
+                _switch;
 
             // var newNodesInfo;  // a variable records the newest nodes info.
 
@@ -31,6 +34,17 @@ function InitAll()
                     _svg = d3.select("body").append("svg")
                         .attr("height", _height)
                         .attr("width", _width);
+                }
+                if(!_switch){
+                    _switch = d3.select("body").append("div")
+                        .attr("data-control", "BOX")
+                        .attr("id", "Box_points_switch")
+                        .append("p").text("调用关系：")
+                        .append("label")
+                        .append("input")
+                        .attr("class", "mui-switch mui-switch-anim")
+                        .attr("type", "checkbox")
+                        .attr("id", "switch");
                 }
                 // console.log(_nodes);
                 // newNodesInfo = initDataInfo(_nodes);
@@ -50,7 +64,8 @@ function InitAll()
                     .size([_r, _r])
                     .value(function (d) {
                         return d.size;
-                    });
+                    })
+                    .padding(4);
 
                 // newNodesInfo = initDataInfo(_nodes);
 
@@ -61,10 +76,10 @@ function InitAll()
 
                 renderLabels(nodes);
 
-                dealLinkData(nodes);
+                // dealLinkData(nodes);
                 // console.log(isVisible("works.weave.socks.cart.cart.CartContentsResource:lambda$add$1", nodes));
 
-                renderLinks(nodes);
+                // renderLinks(nodes);
 
                 bindEvents(nodes);
             }
@@ -227,6 +242,10 @@ function InitAll()
 
             function renderLinks(nodes) {
                 _bodyG.selectAll("line").remove();
+                if(!isShowLinks)
+                {
+                    return;
+                }
 
                 var links = dealLinkData(nodes);
 
@@ -331,7 +350,8 @@ function InitAll()
                 var circles = _bodyG.selectAll("circle");
                 var labels = _bodyG.selectAll("text")[0];
                 var lines = _bodyG.selectAll("line");
-                console.log(lines);
+                var switchButton = document.querySelector("input#switch");
+                // console.log(lines);
 
                 //双击circle的时候，class circle会展示method circle，method circle会展示方法流程图
                 circles.on("dblclick", function(d,i){
@@ -393,7 +413,11 @@ function InitAll()
                 // lines.on("mouseenter", function(d, i){
                 //     console.log(this);
                 // })
-
+                switchButton.addEventListener("change", function(d){
+                    // console.log(d);
+                    isShowLinks = !isShowLinks;
+                    renderLinks(nodes);
+                })
             }
 
             _chart.width = function (w) {
@@ -429,8 +453,7 @@ function InitAll()
         //     // console.log(nodes);
         //     chart.nodes(nodes).render();
         // });
-        $.getJSON('data2.txt', function(data)
-        {
+        $.getJSON('data2.txt', function(data) {
             // console.log(data);
             var nodesInfo = data.nodes;
             var linksInfo = data.links;
